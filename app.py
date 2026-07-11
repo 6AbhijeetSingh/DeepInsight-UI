@@ -3,42 +3,105 @@ from transformers import pipeline
 from pypdf import PdfReader
 import re
 
-# Professional page configuration
+# Premium global dashboard initialization
 st.set_page_config(
-    page_title="DeepInsight: Question Answering System", 
+    page_title="DeepInsight | Advanced QA Workspace", 
     page_icon="🧠", 
-    layout="centered",
+    layout="wide", # Shifts to full-screen responsive widescreen mode
     initial_sidebar_state="collapsed"
 )
 
-# Advanced CSS Injection for Premium UX/UI Customization
+# Advanced CSS injection for SaaS styling (Glassmorphism, custom scrollbars, animations)
 st.markdown("""
     <style>
-    .block-container { padding-top: 2rem; padding-bottom: 2rem; max-width: 750px; }
-    .main-title { font-family: 'Inter', -apple-system, sans-serif; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; }
-    .answer-box { background-color: rgba(46, 204, 113, 0.15); border-left: 5px solid #2ecc71; padding: 20px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; transition: all 0.3s ease; }
-    .answer-box:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2); }
-    .answer-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: #2ecc71; margin-bottom: 8px; }
-    .answer-body { font-size: 1.2rem; font-weight: 500; line-height: 1.6; word-wrap: break-word; }
-    .stButton>button { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important; color: white !important; border: none !important; padding: 12px 24px !important; font-weight: 600 !important; border-radius: 8px !important; width: 100% !important; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2) !important; }
-    .stButton>button:hover { transform: translateY(-2px) !important; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4) !important; background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important; }
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] { height: 45px; white-space: pre-wrap; background-color: transparent; border-radius: 6px; padding: 6px 16px; font-weight: 500; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    /* Core Typography & Layout Defaults */
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    .block-container { padding: 2.5rem 5rem !important; max-width: 1400px; }
+    
+    /* App Header Design */
+    .brand-header {
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+        margin-bottom: 0.2rem;
+    }
+    .brand-subtitle { color: #888893; font-size: 1rem; font-weight: 400; margin-bottom: 2rem; }
+    
+    /* Workspace Card Panes */
+    .workspace-card {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+    }
+    
+    /* High-Fidelity Result Display Panel */
+    .result-panel {
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.02) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        border-radius: 14px;
+        padding: 22px;
+        margin-top: 20px;
+        animation: fadeIn 0.4s ease-out;
+    }
+    .result-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: #10b981; margin-bottom: 10px; }
+    .result-text { font-size: 1.25rem; font-weight: 600; line-height: 1.6; color: inherit; }
+    
+    /* Premium Action Button Interactivity */
+    .stButton>button {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 14px 28px !important;
+        font-weight: 600 !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3) !important;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.5) !important;
+        filter: brightness(1.1);
+    }
+    
+    /* File Attachment Item Badges */
+    .file-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.25);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin: 4px;
+        font-weight: 500;
+    }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 """, unsafe_allow_html=True)
 
-# Clean Intuitive Header
-st.markdown('<h1 class="main-title">🧠 DeepInsight: Question Answering System</h1>', unsafe_allow_html=True)
-st.markdown("---")
+# Main Structural Dashboard Header
+st.markdown('<div class="brand-header">🧠 DeepInsight Workspace</div>', unsafe_allow_html=True)
+st.markdown('<div class="brand-subtitle">Enterprise-grade document intelligence and contextual inquiry workspace.</div>', unsafe_allow_html=True)
 
+# Pipeline Engine Management
 @st.cache_resource
 def load_qa_engine():
     return pipeline("question-answering", model="abhiMahi/DeepInsight-QA")
 
-with st.spinner("Initializing DeepInsight Core Engine..."):
+with st.spinner("Synchronizing neural processing engines..."):
     qa_pipe = load_qa_engine()
 
-# Smart Filter to handle 400+ page documents without crashing the free server
 def get_top_relevant_chunks(question, text, chunk_size=2000, top_n=3):
     chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
     q_tokens = set(re.findall(r'\w+', question.lower()))
@@ -50,75 +113,121 @@ def get_top_relevant_chunks(question, text, chunk_size=2000, top_n=3):
         scored_chunks.append((score, chunk))
         
     scored_chunks.sort(key=lambda x: x[0], reverse=True)
-    top_chunks = [x[1] for x in scored_chunks[:top_n]]
-    return "\n".join(top_chunks)
+    return "\n".join([x[1] for x in scored_chunks[:top_n]])
 
-# Tabbed Interface
-tab1, tab2 = st.tabs(["📁 Upload Document(s)", "✍️ Raw Text Input"])
+# --- MASTER TWO-COLUMN WORKSPACE GRID ---
+left_panel, right_panel = st.columns([5, 6], gap="large")
+
 global_context_text = ""
 
-with tab1:
-    # Enabled multiple file uploads
-    uploaded_files = st.file_uploader("Upload any document or pdf (Multiple files allowed):", type=["pdf", "txt"], accept_multiple_files=True)
+with left_panel:
+    st.markdown('<div class="workspace-card">', unsafe_allow_html=True)
+    st.markdown("### 📁 Data Source Controls")
     
-    if uploaded_files:
-        extracted_texts = []
-        for file in uploaded_files:
-            file_extension = file.name.split(".")[-1].lower()
-            if file_extension == "pdf":
-                try:
-                    pdf_reader = PdfReader(file)
-                    text_list = [page.extract_text() for page in pdf_reader.pages if page.extract_text()]
-                    extracted_texts.append("\n".join(text_list))
-                except Exception as e:
-                    st.error(f"Error reading {file.name}: {e}")
-            elif file_extension == "txt":
-                extracted_texts.append(file.read().decode("utf-8"))
+    tab1, tab2 = st.tabs(["Document Files", "Plain Text Stream"])
+    
+    with tab1:
+        uploaded_files = st.file_uploader(
+            "Upload reference assets:", 
+            type=["pdf", "txt"], 
+            accept_multiple_files=True,
+            label_visibility="collapsed"
+        )
         
-        global_context_text = "\n".join(extracted_texts)
-        if global_context_text:
-            st.success(f"System: Successfully processed {len(uploaded_files)} file(s).")
+        if uploaded_files:
+            extracted_texts = []
+            st.markdown("<div style='margin-top: 15px; margin-bottom: 5px;'>**Active Index Stack:**</div>", unsafe_allow_html=True)
+            for file in uploaded_files:
+                file_extension = file.name.split(".")[-1].lower()
+                # Render elegant document item badges
+                st.markdown(f'<div class="file-badge">📄 {file.name} ({file.size/1024:.1f} KB)</div>', unsafe_allow_html=True)
+                
+                if file_extension == "pdf":
+                    try:
+                        pdf_reader = PdfReader(file)
+                        text_list = [page.extract_text() for page in pdf_reader.pages if page.extract_text()]
+                        extracted_texts.append("\n".join(text_list))
+                    except Exception as e:
+                        st.error(f"Error compiling {file.name}: {e}")
+                elif file_extension == "txt":
+                    extracted_texts.append(file.read().decode("utf-8"))
+            
+            global_context_text = "\n".join(extracted_texts)
+            
+    with tab2:
+        context_text_input = st.text_area(
+            label="Direct target text input allocation:",
+            placeholder="Paste document text or standard unstructured paragraphs here...",
+            height=280,
+            label_visibility="collapsed"
+        )
+        if context_text_input:
+            global_context_text = context_text_input
+            
+    st.markdown('</div>', unsafe_allow_html=True)
 
-with tab2:
-    context_text_input = st.text_area(
-        label="Add text from which you want to get an answer:",
-        value="",
-        placeholder="Type or paste paragraphs here...",
-        height=260
+with right_panel:
+    st.markdown('<div class="workspace-card">', unsafe_allow_html=True)
+    st.markdown("### ❓ Query Interface")
+    
+    # Initialize session state tracking variable for dynamic chip value injection
+    if "current_query" not in st.st.session_state:
+        st.session_state.current_query = ""
+
+    user_question = st.text_input(
+        "Enter query text parameters:", 
+        value=st.session_state.current_query,
+        placeholder="What specific fact or variable would you like to extract?",
+        label_visibility="collapsed"
     )
-    if context_text_input:
-        global_context_text = context_text_input
+    
+    # Quick Suggested Query Shortcut Row
+    st.markdown("<div style='margin-top: -5px; margin-bottom: 15px;'><span style='font-size: 0.85rem; color: #888;'>Suggestions:</span></div>", unsafe_allow_html=True)
+    chip_cols = st.columns(3)
+    with chip_cols[0]:
+        if st.button("📋 Core Summary", key="chip_1"):
+            st.session_state.current_query = "What is the summary or core concept discussed?"
+            st.rerun()
+    with chip_cols[1]:
+        if st.button("🔬 Target Variables", key="chip_2"):
+            st.session_state.current_query = "What variables or requirements are listed?"
+            st.rerun()
+    with chip_cols[2]:
+        if st.button("📈 Main Conclusion", key="chip_3"):
+            st.session_state.current_query = "What is the final conclusion or result?"
+            st.rerun()
 
-# Clean Query Section
-st.markdown("### ❓ Ask a Question")
-user_question = st.text_input("Enter your question based on the provided data:")
-
-if st.button("Extract Target Answer"):
-    if not global_context_text.strip():
-        st.warning("⚠️ Action Blocked: Please upload a file or write a paragraph first.")
-    elif not user_question.strip():
-        st.warning("⚠️ Action Blocked: Please type a descriptive question.")
-    else:
-        with st.spinner("Scanning documents and processing semantics..."):
-            try:
-                # Instantly filter down massive documents to the best 3 pages
-                optimized_context = get_top_relevant_chunks(user_question, global_context_text)
-                
-                # Run the model on the optimized text
-                result = qa_pipe(question=user_question, context=optimized_context)
-                
-                st.markdown(f"""
-                    <div class="answer-box">
-                        <div class="answer-header">✨ Analysis Complete</div>
-                        <div class="answer-body">{result['answer']}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-                col1, col2 = st.columns([1, 2])
-                with col1:
-                    st.caption(f"**Confidence Matrix:** {result['score']:.2%}")
-                with col2:
-                    st.progress(float(result['score']))
+    st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
+    
+    if st.button("Run Inference Analysis"):
+        if not global_context_text.strip():
+            st.warning("Analysis Blocked: No source context assets detected inside the workspace.")
+        elif not user_question.strip():
+            st.warning("Analysis Blocked: Please outline a query value first.")
+        else:
+            with st.spinner("Executing semantic segment extraction routines..."):
+                try:
+                    # Dynamically process heavy items down to top-match records
+                    optimized_context = get_top_relevant_chunks(user_question, global_context_text)
+                    result = qa_pipe(question=user_question, context=optimized_context)
                     
-            except Exception as e:
-                st.error(f"Runtime Pipeline Error: {e}")
+                    # Premium Output UI Render Block
+                    st.markdown(f"""
+                        <div class="result-panel">
+                            <div class="result-header">✨ Extracted Target Segment</div>
+                            <div class="result-text">{result['answer']}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Statistical Context Sub-Bar
+                    st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+                    m_col1, m_col2 = st.columns([1, 2])
+                    with m_col1:
+                        st.caption(f"**Confidence Matrix:** {result['score']:.2%}")
+                    with m_col2:
+                        st.progress(float(result['score']))
+                        
+                except Exception as e:
+                    st.error(f"Execution Error: {e}")
+                    
+    st.markdown('</div>', unsafe_allow_html=True)
