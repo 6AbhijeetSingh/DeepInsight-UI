@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. Extreme CSS Injection (Overriding Native Streamlit Clutter)
+# 2. Adaptive CSS Injection (Works perfectly in Light & Dark Themes)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -56,10 +56,14 @@ st.markdown("""
         animation: shine 3s linear infinite;
     }
     .brand-subtitle {
-        color: #94a3b8; 
+        color: var(--text-color); 
+        opacity: 0.7;
         font-size: 1.15rem; 
         margin-bottom: 3rem;
         font-weight: 400;
+    }
+    h3 {
+        color: var(--text-color) !important;
     }
     
     /* --------------------------------------
@@ -67,25 +71,26 @@ st.markdown("""
        -------------------------------------- */
     [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #0f172a;
+        background-color: var(--secondary-background-color);
         padding: 6px;
         border-radius: 12px;
-        border: 1px solid #1e293b;
+        border: 1px solid rgba(128, 128, 128, 0.2);
     }
     [data-baseweb="tab"] {
         background-color: transparent !important;
-        color: #64748b !important;
+        color: var(--text-color) !important;
+        opacity: 0.6;
         border-radius: 8px !important;
         padding: 8px 16px !important;
         border: none !important;
         font-weight: 600 !important;
     }
     [aria-selected="true"] {
-        background-color: #1e293b !important;
-        color: #f8fafc !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+        background-color: var(--background-color) !important;
+        color: var(--text-color) !important;
+        opacity: 1 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     }
-    /* Hiding the ugly default red underline */
     div[data-baseweb="tab-highlight"] {
         display: none !important;
     }
@@ -94,9 +99,9 @@ st.markdown("""
        INPUTS & UPLOADER
        -------------------------------------- */
     .stTextInput input, .stTextArea textarea {
-        background-color: #1e293b !important;
-        border: 1px solid #334155 !important;
-        color: #f8fafc !important;
+        background-color: var(--secondary-background-color) !important;
+        border: 1px solid rgba(128, 128, 128, 0.2) !important;
+        color: var(--text-color) !important;
         border-radius: 8px !important;
         padding: 12px 16px !important;
         font-size: 1rem !important;
@@ -107,15 +112,14 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
     }
     [data-testid="stFileUploader"] {
-        background-color: #0f172a;
-        border: 1px dashed #475569;
+        background-color: var(--secondary-background-color);
+        border: 1px dashed rgba(128, 128, 128, 0.4);
         border-radius: 12px;
         padding: 15px;
         transition: all 0.3s ease;
     }
     [data-testid="stFileUploader"]:hover {
         border-color: #8b5cf6;
-        background-color: #1e293b;
     }
 
     /* --------------------------------------
@@ -137,21 +141,21 @@ st.markdown("""
     }
     .stButton>button[kind="secondary"] {
         background: transparent !important;
-        color: #94a3b8 !important;
-        border: 1px solid #334155 !important;
+        color: var(--text-color) !important;
+        border: 1px solid rgba(128, 128, 128, 0.3) !important;
         border-radius: 20px !important;
         padding: 0.25rem 1rem !important;
         font-size: 0.85rem !important;
         font-weight: 500 !important;
+        opacity: 0.8;
         transition: all 0.2s ease !important;
     }
     .stButton>button[kind="secondary"]:hover {
-        color: #f8fafc !important;
+        opacity: 1;
         border-color: #8b5cf6 !important;
         background: rgba(139, 92, 246, 0.1) !important;
     }
     
-    /* Fixing the muddy yellow warning box */
     [data-testid="stAlert"] {
         background-color: rgba(245, 158, 11, 0.1) !important;
         color: #fcd34d !important;
@@ -159,18 +163,20 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Final Output Card */
+    /* --------------------------------------
+       FINAL OUTPUT CARD
+       -------------------------------------- */
     .success-card {
-        background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+        background: var(--secondary-background-color);
         border-left: 4px solid #10b981;
         border-radius: 8px;
         padding: 1.5rem;
         margin-top: 1.5rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(16, 185, 129, 0.2);
     }
     .success-label { color: #10b981; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 0.5rem; }
-    .success-text { color: #f8fafc; font-size: 1.15rem; line-height: 1.6; font-weight: 400; }
+    .success-text { color: var(--text-color); font-size: 1.15rem; line-height: 1.6; font-weight: 400; }
     
     /* Animations */
     @keyframes shine { to { background-position: 200% center; } }
@@ -222,7 +228,7 @@ global_context_text = ""
 
 # LEFT PANEL: The Brain (Context)
 with left_panel:
-    st.markdown("<h3 style='color: #e2e8f0; font-weight: 600;'>Data Source</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-weight: 600;'>Data Source</h3>", unsafe_allow_html=True)
     
     tab1, tab2 = st.tabs(["Upload Files", "Raw Text"])
     
@@ -264,7 +270,7 @@ with left_panel:
 
 # RIGHT PANEL: The Interface (Query)
 with right_panel:
-    st.markdown("<h3 style='color: #e2e8f0; font-weight: 600;'>Inquiry</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-weight: 600;'>Inquiry</h3>", unsafe_allow_html=True)
     
     if "current_query" not in st.session_state:
         st.session_state.current_query = ""
@@ -277,7 +283,7 @@ with right_panel:
     )
     
     # Elegant Suggestion Pills
-    st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; color: #64748b; font-size: 0.85rem;'>Quick filters:</div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; opacity: 0.7; font-size: 0.85rem;'>Quick filters:</div>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
         if st.button("Core Theme", type="secondary", use_container_width=True):
