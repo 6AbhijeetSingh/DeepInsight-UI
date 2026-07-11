@@ -7,7 +7,7 @@ import re
 st.set_page_config(
     page_title="DeepInsight | Advanced QA Workspace", 
     page_icon="🧠", 
-    layout="wide", # Shifts to full-screen responsive widescreen mode
+    layout="wide", 
     initial_sidebar_state="collapsed"
 )
 
@@ -139,7 +139,6 @@ with left_panel:
             st.markdown("<div style='margin-top: 15px; margin-bottom: 5px;'>**Active Index Stack:**</div>", unsafe_allow_html=True)
             for file in uploaded_files:
                 file_extension = file.name.split(".")[-1].lower()
-                # Render elegant document item badges
                 st.markdown(f'<div class="file-badge">📄 {file.name} ({file.size/1024:.1f} KB)</div>', unsafe_allow_html=True)
                 
                 if file_extension == "pdf":
@@ -170,8 +169,8 @@ with right_panel:
     st.markdown('<div class="workspace-card">', unsafe_allow_html=True)
     st.markdown("### ❓ Query Interface")
     
-    # Initialize session state tracking variable for dynamic chip value injection
-    if "current_query" not in st.st.session_state:
+    # FIX: Corrected the typo here from st.st.session_state to st.session_state
+    if "current_query" not in st.session_state:
         st.session_state.current_query = ""
 
     user_question = st.text_input(
@@ -207,11 +206,9 @@ with right_panel:
         else:
             with st.spinner("Executing semantic segment extraction routines..."):
                 try:
-                    # Dynamically process heavy items down to top-match records
                     optimized_context = get_top_relevant_chunks(user_question, global_context_text)
                     result = qa_pipe(question=user_question, context=optimized_context)
                     
-                    # Premium Output UI Render Block
                     st.markdown(f"""
                         <div class="result-panel">
                             <div class="result-header">✨ Extracted Target Segment</div>
@@ -219,7 +216,6 @@ with right_panel:
                         </div>
                     """, unsafe_allow_html=True)
                     
-                    # Statistical Context Sub-Bar
                     st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
                     m_col1, m_col2 = st.columns([1, 2])
                     with m_col1:
