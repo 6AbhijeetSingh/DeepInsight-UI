@@ -1,3 +1,5 @@
 transformers<5.0.0
 torch
 pypdf
+streamlit>=1.40.0
+starlette<0.39.0
